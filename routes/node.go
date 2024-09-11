@@ -1,7 +1,5 @@
 package routes
 
-import "fmt"
-
 func init() {
 	addCompiler("js", func(root, path string, isDir bool) {
 		//todo: create js route in dist
@@ -13,6 +11,7 @@ func init() {
 			return
 		}
 
-		fmt.Println(dir, file, out)
+		// fmt.Println(dir, file, out)
+		_, _ = dir, file
 	})
 }

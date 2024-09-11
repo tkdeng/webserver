@@ -1,7 +1,5 @@
 package routes
 
-import "fmt"
-
 func init() {
 	addCompiler("exs", func(root, path string, isDir bool) {
 		//todo: create exs route in dist
@@ -11,6 +9,7 @@ func init() {
 			return
 		}
 
-		fmt.Println(dir, file, out)
+		// fmt.Println(dir, file, out)
+		_, _ = dir, file
 	})
 }
