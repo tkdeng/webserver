@@ -4,8 +4,8 @@
 defmodule App do
   def render(page, args, layout) do
     # todo: import elixir page templates in production, and render directly
-    '#{page} #{args[:key]} #{layout}'
+    IO.puts '#{page} #{args[:key]} #{layout}'
   end
 end
 
-IO.puts App.render :index, %{key: "value"}, :layout
+App.render :index, %{key: "value"}, :layout
