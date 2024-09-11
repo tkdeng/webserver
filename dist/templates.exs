@@ -2,17 +2,17 @@ Mix.install([:jason])
 
 defmodule App do
   @map_layout %{
-		"layout" => :_layout_a9ykpzxlyyuWlBlD,
+		"layout" => :_layout_a9ymtdPXgEdLvSwm,
   } #_MAP_LAYOUT
 
   @map_widget %{
-		"app" => :_app_a9ykpNpjxmkPjba7,
+		"app" => :_app_a9ymtzoL6RHX8DJr,
   } #_MAP_WIDGET
 
   @map_page %{
-		"404" => :_404_a9ykpdDXi3sPLFm8,
-		"error" => :_error_a9ykpG7NMOjjU41F,
-		"index" => :_index_a9ykpbJd39CCfyX2,
+		"404" => :_404_a9ymtg5gs8AbEh2v,
+		"error" => :_error_a9ymtfl5KITONx4f,
+		"index" => :_index_a9ymtu92GonMvhjM,
   } #_MAP_PAGE
 
   def listen() do
@@ -198,29 +198,29 @@ defmodule App do
 end
 
 defmodule LAYOUT do
-	def _layout_a9ykpzxlyyuWlBlD(args, cont) do
+	def _layout_a9ymtdPXgEdLvSwm(args, cont) do
 		"<<PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgPG1ldGEgY2hhcnNldD0iVVRGLTgiLz4KICA8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBoZWlnaHQ9ZGV2aWNlLWhlaWdodCwgaW5pdGlhbC1zY2FsZT0xLjAsIG1pbmltdW0tc2NhbGU9MS4wIi8+CiAgPG1ldGEgbmFtZT0iZGVzY3JpcHRpb24iIGNvbnRlbnQ9Ig==>>#{App.escapeArg args[:desc]}<<Ii8+CiAgPHRpdGxlPg==>>#{App.escapeHTML args[:title]}<<PC90aXRsZT4KICA=>>#{cont[:head]}<<CjwvaGVhZD4KPGJvZHk+CiAg>>#{cont[:body]}<<CjwvYm9keT4KPC9odG1sPg==>>"
 	end
 end #_LAYOUT
 
 defmodule WIDGET do
-	def _app_a9ykpNpjxmkPjba7(args) do
+	def _app_a9ymtzoL6RHX8DJr(args) do
 		"#{App.escapeHTML args[:_n]}<<ICogMiA9IDwlCiAgYXJncy5uICogMgolPg==>>"
 	end
 end #_WIDGET
 
 defmodule PAGE do
-	def _404_a9ykpdDXi3sPLFm8(layout, args) do
+	def _404_a9ymtg5gs8AbEh2v(layout, args) do
 		App.layout layout, args, %{
 			body: "<<CiAgPGgxPkVycm9yIDQwNDwvaDE+CiAgPGgyPlBhZ2UgTm90IEZvdW5kITwvaDI+>>",
 		}
 	end
-	def _error_a9ykpG7NMOjjU41F(layout, args) do
+	def _error_a9ymtfl5KITONx4f(layout, args) do
 		App.layout layout, args, %{
 			body: "<<CiAgPGgxPkVycm9yIA==>>#{App.escapeHTML args[:status]}<<PC9oMT4KICA8aDI+>>#{App.escapeHTML args[:error]}<<PC9oMj4=>>",
 		}
 	end
-	def _index_a9ykpbJd39CCfyX2(layout, args) do
+	def _index_a9ymtu92GonMvhjM(layout, args) do
 		App.layout layout, args, %{
 			head: "<<CiAgPGxpbmsgcmVsPSJzdHlsZXNoZWV0IiBocmVmPSIvc3R5bGUuY3NzIj4=>>",
 			body: "<<CiAgPGgxPkhlbGxvLCBXb3JsZDwvaDE+CiAg>>#{App.widget "app", Map.merge(args, %{

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"server/compiler/routes"
+	"server/routes"
 	"strings"
 	"time"
 
@@ -22,6 +22,12 @@ func compile() {
 
 	compRoutes("./src/routes", "")
 
+	//todo: listen for file changes in routes
+	// for better performance, simply recompile over existing dist files as needed
+	// will need to detect when a route is removed separately, and remove it from dist
+
+	// temp: turnned off compile templates
+	// remember to turn back on
 	// compTemplates()
 }
 
