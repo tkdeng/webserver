@@ -21,7 +21,6 @@ func main() {
 
 	//todo: create method to run dist files in 'routes' directory
 	// also include dist route handlers in routes.go
-	// return
 
 	out, err := runRoute("index")
 	if err != nil {
