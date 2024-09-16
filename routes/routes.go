@@ -22,21 +22,21 @@ func addCompiler(name string, cb func(src, dist, path string, isDir bool)) {
 }
 
 func genBinary(out string, dir string, lastArgFirst bool, cmd string, args ...string) {
-	tmp := runRouteTemplate
+	buf := runRouteTemplate
 
 	argStr := [][]byte{}
 	for _, arg := range args {
 		argStr = append(argStr, regex.JoinBytes('`', goutil.HTML.EscapeArgs([]byte(arg), '`'), '`'))
 	}
 
-	tmp = bytes.ReplaceAll(tmp, []byte("{DIR}"), []byte(goutil.HTML.EscapeArgs([]byte(dir), '`')))
-	tmp = bytes.ReplaceAll(tmp, []byte("{CMD}"), []byte(goutil.HTML.EscapeArgs([]byte(cmd), '`')))
-	tmp = bytes.ReplaceAll(tmp, []byte("`{ARGS}`"), bytes.Join(argStr, []byte{','}))
+	buf = bytes.ReplaceAll(buf, []byte("{DIR}"), []byte(goutil.HTML.EscapeArgs([]byte(dir), '`')))
+	buf = bytes.ReplaceAll(buf, []byte("{CMD}"), []byte(goutil.HTML.EscapeArgs([]byte(cmd), '`')))
+	buf = bytes.ReplaceAll(buf, []byte("`{ARGS}`"), bytes.Join(argStr, []byte{','}))
 
 	if lastArgFirst {
-		tmp = bytes.ReplaceAll(tmp, []byte("`{LASTARGFIRST}`"), []byte("true"))
-	}else{
-		tmp = bytes.ReplaceAll(tmp, []byte("`{LASTARGFIRST}`"), []byte("false"))
+		buf = bytes.ReplaceAll(buf, []byte("/*{LASTARGFIRST}*/ false"), []byte("true"))
+	} else {
+		buf = bytes.ReplaceAll(buf, []byte("/*{LASTARGFIRST}*/ false"), []byte("false"))
 	}
 
 	file, err := os.CreateTemp("/tmp", "*.go")
@@ -45,7 +45,7 @@ func genBinary(out string, dir string, lastArgFirst bool, cmd string, args ...st
 	}
 	defer file.Close()
 
-	file.Write(tmp)
+	file.Write(buf)
 	file.Sync()
 	bash.Run([]string{`go`, `build`, `-o`, out, file.Name()}, "", nil, true)
 }

@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-const lastArgFirst bool = `{LASTARGFIRST}`
+const lastArgFirst bool = /*{LASTARGFIRST}*/ false
 
 func main() {
 	args := []string{`{ARGS}`}
