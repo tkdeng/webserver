@@ -17,10 +17,11 @@ func main() {
 	// also compile with separate htmlc module
 	// routes will be compiled by server (not by htmlc)
 
-	// compile()
+	compile()
 
 	//todo: create method to run dist files in 'routes' directory
 	// also include dist route handlers in routes.go
+	// return
 
 	out, err := runRoute("index")
 	if err != nil {
@@ -74,6 +75,32 @@ func runRoute(url string) ([]byte, error) {
 	}
 
 	stat, err := os.Stat(path)
+	if err != nil {
+		return []byte{}, os.ErrNotExist
+	}
+
+	if stat.IsDir() {
+		stat, err = os.Stat(path + "/index")
+		if err != nil || stat.IsDir() {
+			if files, err := os.ReadDir(path); err == nil {
+				for _, file := range files {
+					if dynamicRouteReg.MatchString(file.Name()) {
+						args = append(args, "index")
+
+						p, err := goutil.JoinPath(path, file.Name())
+						if err != nil {
+							return []byte{}, err
+						}
+
+						path = p
+						break
+					}
+				}
+			}
+		}
+	}
+
+	stat, err = os.Stat(path)
 	if err != nil || stat.IsDir() {
 		return []byte{}, os.ErrNotExist
 	}

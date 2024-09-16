@@ -18,6 +18,7 @@ int main(){
 
   json_end(&json);
 
+  //todo: improve render method
   render("index", json, "layout");
 
   return 0;
