@@ -5,8 +5,18 @@ import (
 	"os/exec"
 )
 
+const lastArgFirst bool = `{LASTARGFIRST}`
+
 func main() {
-	cmd := exec.Command(`{CMD}`, append([]string{`{ARGS}`}, os.Args[1:]...)...)
+	args := []string{`{ARGS}`}
+
+	if lastArgFirst && len(os.Args) > 1 {
+		args = append([]string{os.Args[1]}, append(args, os.Args[2:]...)...)
+	} else {
+		args = append(args, os.Args[1:]...)
+	}
+
+	cmd := exec.Command(`{CMD}`, args...)
 	cmd.Dir = `{DIR}`
 
 	cmd.Stdin = os.Stdin

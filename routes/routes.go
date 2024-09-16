@@ -21,7 +21,7 @@ func addCompiler(name string, cb func(src, dist, path string, isDir bool)) {
 	RouteCompiler[name] = cb
 }
 
-func genBinary(out string, dir string, cmd string, args ...string) {
+func genBinary(out string, dir string, lastArgFirst bool, cmd string, args ...string) {
 	tmp := runRouteTemplate
 
 	argStr := [][]byte{}
@@ -32,6 +32,12 @@ func genBinary(out string, dir string, cmd string, args ...string) {
 	tmp = bytes.ReplaceAll(tmp, []byte("{DIR}"), []byte(goutil.HTML.EscapeArgs([]byte(dir), '`')))
 	tmp = bytes.ReplaceAll(tmp, []byte("{CMD}"), []byte(goutil.HTML.EscapeArgs([]byte(cmd), '`')))
 	tmp = bytes.ReplaceAll(tmp, []byte("`{ARGS}`"), bytes.Join(argStr, []byte{','}))
+
+	if lastArgFirst {
+		tmp = bytes.ReplaceAll(tmp, []byte("`{LASTARGFIRST}`"), []byte("true"))
+	}else{
+		tmp = bytes.ReplaceAll(tmp, []byte("`{LASTARGFIRST}`"), []byte("false"))
+	}
 
 	file, err := os.CreateTemp("/tmp", "*.go")
 	if err != nil {
