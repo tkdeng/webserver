@@ -2,21 +2,17 @@ package routes
 
 import (
 	"os"
+	"strings"
 
 	bash "github.com/tkdeng/gobash"
 )
 
 func init() {
-	addCompiler("scala", func(root, path string, isDir bool) {
-		_, _, out := getPaths(root, path, isDir, "scala")
-		if out == "" {
-			return
-		}
-
-		// may treat scala file like a directory (object defines path)
+	addCompiler("scala", func(src, dist, path string, isDir bool) {
 		if !isDir {
-			os.MkdirAll(out, 0755)
-			bash.Run([]string{`scalac`, path}, out, nil, true)
+			outDir := strings.TrimSuffix(dist+"/"+path, ".scala")
+			os.MkdirAll(outDir, 0755)
+			bash.Run([]string{`scalac`, src + "/" + path}, outDir, nil, true)
 		}
 
 		//todo: add directory handler for scala

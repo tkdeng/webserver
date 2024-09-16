@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"server/routes"
-	"strings"
 	"time"
 
 	regex "github.com/tkdeng/goregex"
@@ -20,7 +19,7 @@ func compile() {
 		panic(err)
 	}
 
-	compRoutes("./src/routes", "")
+	compRoutes("./src/routes", "./dist/routes", "")
 
 	//todo: listen for file changes in routes
 	// for better performance, simply recompile over existing dist files as needed
@@ -31,37 +30,48 @@ func compile() {
 	// compTemplates()
 }
 
-func compRoutes(root string, dir string) {
-	if path, err := goutil.JoinPath(root); err == nil {
-		root = path
+func compRoutes(src, dist, dir string) {
+	if path, err := goutil.JoinPath(src); err == nil {
+		src = path
 	}
 
-	if dir == "" {
-		dir = root
+	if path, err := goutil.JoinPath(dist); err == nil {
+		dist = path
 	}
 
-	if files, err := os.ReadDir(dir); err == nil {
+	fullDir := src
+	if dir != "" {
+		if path, err := goutil.JoinPath(src, dir); err == nil {
+			fullDir = path
+		}
+	}
+
+	if files, err := os.ReadDir(fullDir); err == nil {
 		for _, file := range files {
 			if file.IsDir() {
-				if path, err := goutil.JoinPath(dir, file.Name()); err == nil {
-					if regex.Comp(`\.([\w_-]+)$`).Match([]byte(file.Name())) {
-						lang := ""
-						regex.Comp(`\.([\w_-]+)$`).RepFunc([]byte(file.Name()), func(data func(int) []byte) []byte {
-							lang = string(data(1))
-							return nil
-						})
+				if regex.Comp(`\.([\w_-]+)$`).Match([]byte(file.Name())) {
+					lang := ""
+					regex.Comp(`\.([\w_-]+)$`).RepFunc([]byte(file.Name()), func(data func(int) []byte) []byte {
+						lang = string(data(1))
+						return nil
+					})
 
-						if lang != "" {
-							if cb, ok := routes.RouteCompiler[lang]; ok {
-								cb(root, path, true)
-								continue
+					if lang != "" {
+						if cb, ok := routes.RouteCompiler[lang]; ok {
+							if dir != "" {
+								dir += "/"
 							}
+							cb(src, dist, dir+file.Name(), true)
+							continue
 						}
 					}
-
-					compRoutes(root, strings.Replace(path, root, "", 1))
 				}
-			} else if path, err := goutil.JoinPath(dir, file.Name()); err == nil {
+
+				if dir != "" {
+					dir += "/"
+				}
+				compRoutes(src, dist, dir+file.Name())
+			} else if regex.Comp(`\.([\w_-]+)$`).Match([]byte(file.Name())) {
 				lang := ""
 				regex.Comp(`\.([\w_-]+)$`).RepFunc([]byte(file.Name()), func(data func(int) []byte) []byte {
 					lang = string(data(1))
@@ -70,7 +80,10 @@ func compRoutes(root string, dir string) {
 
 				if lang != "" {
 					if cb, ok := routes.RouteCompiler[lang]; ok {
-						cb(root, path, false)
+						if dir != "" {
+							dir += "/"
+						}
+						cb(src, dist, dir+file.Name(), false)
 						continue
 					}
 				}

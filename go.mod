@@ -6,7 +6,7 @@ require (
 	github.com/tkdeng/gobash v0.0.0-20240829205649-8eb77a299f33
 	github.com/tkdeng/goregex v0.0.1
 	github.com/tkdeng/goutil v0.7.0
-	github.com/tkdeng/htmlc v0.1.1
+	github.com/tkdeng/htmlc v0.1.3
 )
 
 require (
