@@ -3,7 +3,9 @@
 .vscode
 .idea
 dist
+test/dist
 db
+test/db
 *.db
 *.sqlite
 ssl
