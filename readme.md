@@ -10,7 +10,7 @@ Currently Supported Languages: C, Go, Scala.
 This module runs a server with a golang base for handling http.
 Templates are rendered in [htmlc](https://github.com/tkdeng/htmlc) which compiles to elixir.
 
-> Note: This project is still in beta.
+> Notice: This Project Is Still In Beta.
 
 ## Installation
 
