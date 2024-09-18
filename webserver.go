@@ -10,39 +10,6 @@ import (
 	"github.com/tkdeng/htmlc"
 )
 
-//!htmlc: --src="src/templates" --dist="dist"
-
-/* func main() {
-	//todo: handle server
-	// also compile with separate htmlc module
-	// routes will be compiled by server (not by htmlc)
-
-	compile()
-
-	//todo: create method to run dist files in 'routes' directory
-	// also include dist route handlers in routes.go
-
-	page, err := getRoute("/")
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-
-	fmt.Println("@page:", page.Page, "\n@layout:", page.Layout, "\n@args:", page.Args, "\n----------")
-	fmt.Println(string(page.buf))
-
-	engine, err := htmlc.Engine("./dist/templates.exs")
-	if err != nil {
-		panic(err)
-	}
-
-	out, err := engine.Render(page.Page, page.Args, page.Layout)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(string(out))
-
-} */
-
 type ConfigData struct {
 	Title    string
 	AppTitle string
