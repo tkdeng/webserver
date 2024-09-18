@@ -1,6 +1,14 @@
 # Web Server
 
-A Web Server Written In... Every Programming Language?
+A Web Server Written In... Any Programming Language?
+
+Develop a website with your favorite programming language.
+Currently Supported Languages: C, Go, Scala.
+
+This module runs a server with a golang base for handling http.
+Templates are rendered in [htmlc](https://github.com/tkdeng/htmlc) which compiles to elixir.
+
+> Note: This project is still in beta.
 
 ## Installation
 
