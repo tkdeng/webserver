@@ -1,6 +1,6 @@
 # Web Server
 
-A Web Server Written In Go.
+A Web Server Written In... Every Programming Language?
 
 ## Installation
 
@@ -38,7 +38,7 @@ func main(){
 ```yaml
 title: "Web Server"
 app_title: "WebServer"
-desc: "A Web Server Written In Go."
+desc: "A Web Server."
 
 public_uri: "/public/"
 

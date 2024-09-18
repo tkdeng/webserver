@@ -31,7 +31,7 @@ type ConfigData struct {
 var Config = ConfigData{
 	Title:    "Web Server",
 	AppTitle: "WebServer",
-	Desc:     "A Web Server Written In Go.",
+	Desc:     "A Web Server.",
 
 	PortHTTP: 8080,
 	PortSSL:  8443,
