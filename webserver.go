@@ -45,13 +45,7 @@ type App struct {
 
 func New(root string) (App, error) {
 	// load config file
-	if path, err := filepath.Abs(root); err == nil {
-		root = path
-	}
-	root = strings.TrimSuffix(root, "/")
-
-	goutil.ReadConfig(root+"/config.yml", &Config)
-	Config.Root = root
+	loadConfig(root)
 
 	// compile src
 	compile()
@@ -110,6 +104,17 @@ func (app *App) Listen() error {
 	})
 
 	return ListenAutoTLS(app.App, Config.PortHTTP, Config.PortSSL, Config.Root+"/db/ssl/auto_ssl")
+}
+
+func loadConfig(root string){
+	// load config file
+	if path, err := filepath.Abs(root); err == nil {
+		root = path
+	}
+	root = strings.TrimSuffix(root, "/")
+
+	goutil.ReadConfig(root+"/config.yml", &Config)
+	Config.Root = root
 }
 
 func Render(c fiber.Ctx, name string, args htmlc.Map, layout ...string) error {

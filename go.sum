@@ -32,10 +32,8 @@ github.com/tkdeng/gobash v0.0.0-20240829205649-8eb77a299f33 h1:qygIK2VjxvC44FY2v
 github.com/tkdeng/gobash v0.0.0-20240829205649-8eb77a299f33/go.mod h1:b10AQGgYtMs7NsoU8WbczfCj1Cyo8F53kqGQCepzNgQ=
 github.com/tkdeng/goregex v0.0.1 h1:FDzfPPh9WPjq+1SoWiTCmj/y8kUSBLZrrzBxj2jS1AM=
 github.com/tkdeng/goregex v0.0.1/go.mod h1:J7KTKpQXsJvFspOWei3V7IYLnB9DQvrMMXAw2cjeu1E=
-github.com/tkdeng/goutil v0.7.0 h1:rVgWjOca0kjs6HNcD3LuGDq/u9VD10ouSuP07C/R2Xg=
-github.com/tkdeng/goutil v0.7.0/go.mod h1:3kDx00BW5bQx/wSl5L5XAwYScNRYX0nxTdrlcWxBXSw=
-github.com/tkdeng/goutil v0.7.1 h1:UEQ79lAMVeKCegojgSD528hny3wrH/OxV9BI6E7Hhi8=
-github.com/tkdeng/goutil v0.7.1/go.mod h1:3kDx00BW5bQx/wSl5L5XAwYScNRYX0nxTdrlcWxBXSw=
+github.com/tkdeng/goutil v0.7.2 h1:ywA9iSLFc3Ad+64XUZ/hF/Y5DOpi7zckJIVKjHVU8qI=
+github.com/tkdeng/goutil v0.7.2/go.mod h1:3kDx00BW5bQx/wSl5L5XAwYScNRYX0nxTdrlcWxBXSw=
 github.com/tkdeng/htmlc v0.1.3 h1:J1CAp2yk5923EdzfWWEoa6RaBPrKG9swzDdkmJnr7zk=
 github.com/tkdeng/htmlc v0.1.3/go.mod h1:CXE6oDIojPv4rIbDx6WGVxMKL9jsdjHOZoZkKrR8O90=
 github.com/tklauser/go-sysconf v0.3.14 h1:g5vzr9iPFFz24v2KZXs/pvpvh8/V9Fw6vQK5ZZb78yU=

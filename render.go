@@ -120,7 +120,7 @@ func getRoute(url string) (PageRoute, error) {
 		return resPage, err
 	}
 
-	regex.Comp(`(?sm)^@(PAGE|LAYOUT|ARGS):(.*?);`).RepFunc(out, func(data func(int) []byte) []byte {
+	regex.Comp(`(?m)^@(PAGE|LAYOUT|ARGS):(.*);\r?\n?$`).RepFunc(out, func(data func(int) []byte) []byte {
 		buf := data(2)
 		if bytes.Equal(data(1), []byte("PAGE")) {
 			resPage.Page = string(buf)
@@ -134,7 +134,7 @@ func getRoute(url string) (PageRoute, error) {
 			}
 
 			if json, err := goutil.JSON.Parse(buf); err == nil {
-				resPage.Args = json
+				goutil.JoinMap(&resPage.Args, &json)
 			}
 		}
 		return []byte{}
