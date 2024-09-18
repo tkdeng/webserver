@@ -1,7 +1,7 @@
-package main
+package webserver
 
 import "testing"
 
 func Test(t *testing.T) {
-	main()
+	Server("./test")
 }

@@ -10,14 +10,14 @@ import (
 
 type cronJob struct {
 	interval int64
-	last *int64
-	cb func() bool
+	last     *int64
+	cb       func() bool
 }
 
 var cron map[string]cronJob = map[string]cronJob{}
 var cronMU sync.Mutex
 
-func init(){
+func init() {
 	go func() {
 		for {
 			time.Sleep(1 * time.Second)
@@ -27,7 +27,7 @@ func init(){
 			cronMU.Lock()
 
 			for key, c := range cron {
-				if now > *c.last + c.interval {
+				if now > *c.last+c.interval {
 					*cron[key].last = now
 					if !c.cb() {
 						delete(cron, key)
@@ -57,7 +57,7 @@ func New(interval time.Duration, cb func() bool) error {
 	cronMU.Lock()
 	defer cronMU.Unlock()
 
-	name := "+job:"+string(goutil.URandBytes(16))
+	name := "+job:" + string(goutil.URandBytes(16))
 
 	loops := 1000
 	for loops > 0 {
@@ -74,15 +74,15 @@ func New(interval time.Duration, cb func() bool) error {
 
 	cron[name] = cronJob{
 		interval: intrv,
-		last: &now,
-		cb: cb,
+		last:     &now,
+		cb:       cb,
 	}
 
 	return nil
 }
 
 // SetCron adds or overwrites a named cron job
-func Set(name string, interval time.Duration, cb func() bool){
+func Set(name string, interval time.Duration, cb func() bool) {
 	name = "#job:" + name
 
 	intrv := interval.Milliseconds()
@@ -97,8 +97,8 @@ func Set(name string, interval time.Duration, cb func() bool){
 
 	cron[name] = cronJob{
 		interval: intrv,
-		last: &now,
-		cb: cb,
+		last:     &now,
+		cb:       cb,
 	}
 }
 

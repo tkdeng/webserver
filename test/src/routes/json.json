@@ -1,0 +1,7 @@
+{
+  "pame": "index",
+  "layout": "layout",
+  "args": {
+    "title": "Hello, JSON!"
+  }
+}

@@ -4,7 +4,7 @@
 
 void render(char *page, char *args, char *layout) {
   //todo: return html output from exs template
-  printf("%s\n", page);
-  printf("%s\n", args);
-  printf("%s\n", layout);
+  printf("@PAGE:%s;\n", page);
+  printf("@ARGS:%s;\n", args);
+  printf("@LAYOUT:%s;\n", layout);
 }

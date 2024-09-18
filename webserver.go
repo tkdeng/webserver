@@ -1,0 +1,202 @@
+package webserver
+
+import (
+	"path/filepath"
+	"strings"
+
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/static"
+	"github.com/tkdeng/goutil"
+	"github.com/tkdeng/htmlc"
+)
+
+//!htmlc: --src="src/templates" --dist="dist"
+
+/* func main() {
+	//todo: handle server
+	// also compile with separate htmlc module
+	// routes will be compiled by server (not by htmlc)
+
+	compile()
+
+	//todo: create method to run dist files in 'routes' directory
+	// also include dist route handlers in routes.go
+
+	page, err := getRoute("/")
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	fmt.Println("@page:", page.Page, "\n@layout:", page.Layout, "\n@args:", page.Args, "\n----------")
+	fmt.Println(string(page.buf))
+
+	engine, err := htmlc.Engine("./dist/templates.exs")
+	if err != nil {
+		panic(err)
+	}
+
+	out, err := engine.Render(page.Page, page.Args, page.Layout)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(string(out))
+
+} */
+
+type ConfigData struct {
+	Title    string
+	AppTitle string
+	Desc     string
+
+	PublicURI string
+
+	Origins []string
+	Proxies []string
+
+	PortHTTP uint16
+	PortSSL  uint16
+
+	DebugMode bool
+
+	Root string
+}
+
+var Config = ConfigData{
+	Title:    "Web Server",
+	AppTitle: "WebServer",
+	Desc:     "A Web Server Running With Go!",
+
+	PortHTTP: 8080,
+	PortSSL:  8443,
+}
+
+var Engine *htmlc.ExsEngine
+
+func Server(root string) error {
+	// load config file
+	if path, err := filepath.Abs(root); err == nil {
+		root = path
+	}
+	root = strings.TrimSuffix(root, "/")
+
+	goutil.ReadConfig(root+"/config.yml", &Config)
+	Config.Root = root
+
+	// compile src
+	compile()
+
+	var err error
+	Engine, err = htmlc.Engine(Config.Root + "/dist/templates.exs")
+	if err != nil {
+		return err
+	}
+
+	app := fiber.New(fiber.Config{
+		PassLocalsToViews:       true,
+		AppName:                 Config.AppTitle,
+		ServerHeader:            Config.Title,
+		TrustedProxies:          Config.Proxies,
+		EnableTrustedProxyCheck: true,
+		EnableIPValidation:      true,
+	})
+
+	compressAssets := !Config.DebugMode
+	app.Get("/theme/*", static.New(Config.Root+"/dist/theme", static.Config{Compress: compressAssets}))
+	app.Get("/assets/wasm/*", static.New(Config.Root+"/dist/wasm", static.Config{Compress: compressAssets}))
+	app.Get("/assets/*", static.New(Config.Root+"/dist/assets", static.Config{Compress: compressAssets}))
+	if Config.PublicURI != "" {
+		app.Get(Config.PublicURI, static.New(Config.Root+"/dist/public", static.Config{Compress: compressAssets, Browse: true}))
+	}
+
+	// enforce specific domain and ip origins
+	app.Use(VerifyOrigin(Config.Origins, Config.Proxies, func(c fiber.Ctx, err error) error {
+		c.SendStatus(403)
+		return c.SendString(err.Error())
+	}))
+
+	// auto redirect http to https
+	app.Use(RedirectSSL(Config.PortHTTP, Config.PortSSL))
+
+	// auth.Server(app)
+
+	//todo: create server
+	/* app.Get("/", func(c fiber.Ctx) error {
+		return Render(c, "index", htmlc.Map{
+			"title": Config.Title,
+			"desc":  Config.Desc,
+		})
+	}) */
+
+	app.Use(func(c fiber.Ctx) error {
+		url := goutil.Clean(c.Path())
+		method := goutil.Clean(c.Method())
+
+		if method == "POST" {
+			//todo: handle api requests
+		}
+
+		return RenderPage(c, url)
+	})
+
+	// listen to both http and https ports and
+	// auto generate a self signed ssl certificate
+	// (will also auto renew every year)
+	ListenAutoTLS(app, Config.PortHTTP, Config.PortSSL, Config.Root+"/db/ssl/auto_ssl")
+
+	// by using self signed certs, you can use a proxy like cloudflare and
+	// not have to worry about verifying a certificate athority like lets encrypt
+
+	return nil
+}
+
+func Render(c fiber.Ctx, name string, args htmlc.Map, layout ...string) error {
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+
+	buf, err := Engine.Render(name, args, layout...)
+	if err != nil {
+		c.SendStatus(404)
+
+		if buf, err = Engine.Render("404", args, layout...); err == nil {
+			return c.Send(goutil.Clean(buf))
+		}
+
+		return c.Send([]byte("<h1>Error 404</h1><h2>Page Not Found!</h2>"))
+	}
+
+	c.SendStatus(200)
+	return c.Send(goutil.Clean(buf))
+}
+
+func RenderPage(c fiber.Ctx, url string) error {
+	c.Set(fiber.HeaderContentType, fiber.MIMETextHTML)
+
+	page, err := getRoute(url)
+	if err != nil {
+		c.SendStatus(404)
+		if page, err = getRoute("/404"); err == nil {
+			if buf, err := Engine.Render(page.Page, page.Args, page.Layout); err == nil {
+				return c.Send(goutil.Clean(buf))
+			}
+		}
+
+		if buf, err := Engine.Render("404", page.Args, page.Layout); err == nil {
+			return c.Send(goutil.Clean(buf))
+		}
+
+		return c.Send([]byte("<h1>Error 404</h1><h2>Page Not Found!</h2>"))
+	}
+
+	buf, err := Engine.Render(page.Page, page.Args, page.Layout)
+	if err != nil {
+		c.SendStatus(404)
+
+		if buf, err = Engine.Render("404", page.Args, page.Layout); err == nil {
+			return c.Send(goutil.Clean(buf))
+		}
+
+		return c.Send([]byte("<h1>Error 404</h1><h2>Page Not Found!</h2>"))
+	}
+
+	c.SendStatus(200)
+	return c.Send(goutil.Clean(buf))
+}

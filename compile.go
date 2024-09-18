@@ -1,10 +1,10 @@
-package main
+package webserver
 
 import (
 	"fmt"
 	"os"
-	"server/routes"
 	"time"
+	"webserver/routes"
 
 	regex "github.com/tkdeng/goregex"
 	"github.com/tkdeng/goutil"
@@ -12,22 +12,28 @@ import (
 )
 
 func compile() {
-	os.MkdirAll("./dist", 0755)
+	PrintMsg("warn", "Compilling Server Routes...", 50, false)
 
-	os.RemoveAll("./dist/routes")
-	if err := os.Mkdir("./dist/routes", 0755); err != nil {
+	os.MkdirAll(Config.Root+"/dist", 0755)
+
+	os.RemoveAll(Config.Root + "/dist/routes")
+	if err := os.Mkdir(Config.Root+"/dist/routes", 0755); err != nil {
 		panic(err)
 	}
 
-	compRoutes("./src/routes", "./dist/routes", "")
+	compRoutes(Config.Root+"/src/routes", Config.Root+"/dist/routes", "")
 
 	//todo: listen for file changes in routes
 	// for better performance, simply recompile over existing dist files as needed
 	// will need to detect when a route is removed separately, and remove it from dist
 
+	PrintMsg("warn", "Compilling Server Templates...", 50, false)
+
 	// temp: turnned off compile templates
 	// remember to turn back on
-	// compTemplates()
+	compTemplates()
+
+	PrintMsg("confirm", "Compiled Server!", 50, true)
 }
 
 func compRoutes(src, dist, dir string) {
@@ -93,7 +99,7 @@ func compRoutes(src, dist, dir string) {
 }
 
 func compTemplates() {
-	if err := htmlc.Compile("./src/templates", "./dist/templates.exs"); err != nil {
+	if err := htmlc.Compile(Config.Root+"/src/templates", Config.Root+"/dist/templates.exs"); err != nil {
 		fmt.Println(err)
 	}
 
@@ -103,10 +109,10 @@ func compTemplates() {
 	fw.OnAny = func(path, op string) {
 		if now := time.Now().UnixMilli(); now-lastUpdate > 1000 {
 			lastUpdate = now
-			if err := htmlc.Compile("./src/templates", "./dist/templates.exs"); err != nil {
+			if err := htmlc.Compile(Config.Root+"/src/templates", Config.Root+"/dist/templates.exs"); err != nil {
 				fmt.Println(err)
 			}
 		}
 	}
-	fw.WatchDir("./src/templates")
+	fw.WatchDir(Config.Root + "/src/templates")
 }
