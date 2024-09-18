@@ -1,5 +1,7 @@
 # Web Server
 
+[<img src="./assets/icon.png" alt="icon" height="100"/>](./assets/icon.png)
+
 A Web Server Written In... Any Programming Language?
 
 Develop a website with your favorite programming language.
