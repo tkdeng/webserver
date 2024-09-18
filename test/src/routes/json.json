@@ -1,5 +1,5 @@
 {
-  "pame": "index",
+  "page": "index",
   "layout": "layout",
   "args": {
     "title": "Hello, JSON!"

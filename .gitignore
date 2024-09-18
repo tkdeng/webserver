@@ -3,3 +3,9 @@
 .vscode
 .idea
 dist
+db
+*.db
+*.sqlite
+ssl
+*.crt
+*.key

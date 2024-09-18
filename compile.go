@@ -27,6 +27,8 @@ func compile() {
 	// for better performance, simply recompile over existing dist files as needed
 	// will need to detect when a route is removed separately, and remove it from dist
 
+	//todo: compile apis, themes, assets, wasm, and plugins
+
 	PrintMsg("warn", "Compilling Server Templates...", 50, false)
 
 	// temp: turnned off compile templates

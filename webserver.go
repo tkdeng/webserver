@@ -31,7 +31,7 @@ type ConfigData struct {
 var Config = ConfigData{
 	Title:    "Web Server",
 	AppTitle: "WebServer",
-	Desc:     "A Web Server Running With Go!",
+	Desc:     "A Web Server Written In Go.",
 
 	PortHTTP: 8080,
 	PortSSL:  8443,
@@ -39,7 +39,11 @@ var Config = ConfigData{
 
 var Engine *htmlc.ExsEngine
 
-func Server(root string) error {
+type App struct {
+	*fiber.App
+}
+
+func New(root string) (App, error) {
 	// load config file
 	if path, err := filepath.Abs(root); err == nil {
 		root = path
@@ -55,7 +59,7 @@ func Server(root string) error {
 	var err error
 	Engine, err = htmlc.Engine(Config.Root + "/dist/templates.exs")
 	if err != nil {
-		return err
+		return App{}, err
 	}
 
 	app := fiber.New(fiber.Config{
@@ -72,7 +76,7 @@ func Server(root string) error {
 	app.Get("/assets/wasm/*", static.New(Config.Root+"/dist/wasm", static.Config{Compress: compressAssets}))
 	app.Get("/assets/*", static.New(Config.Root+"/dist/assets", static.Config{Compress: compressAssets}))
 	if Config.PublicURI != "" {
-		app.Get(Config.PublicURI, static.New(Config.Root+"/dist/public", static.Config{Compress: compressAssets, Browse: true}))
+		app.Get(Config.PublicURI, static.New(Config.Root+"/public", static.Config{Compress: compressAssets, Browse: true}))
 	}
 
 	// enforce specific domain and ip origins
@@ -84,36 +88,28 @@ func Server(root string) error {
 	// auto redirect http to https
 	app.Use(RedirectSSL(Config.PortHTTP, Config.PortSSL))
 
-	// auth.Server(app)
+	return App{app}, nil
+}
 
-	//todo: create server
-	/* app.Get("/", func(c fiber.Ctx) error {
-		return Render(c, "index", htmlc.Map{
-			"title": Config.Title,
-			"desc":  Config.Desc,
-		})
-	}) */
-
+// Listen to both http and https ports and
+// auto generate a self signed ssl certificate
+// (will also auto renew every year)
+//
+// by using self signed certs, you can use a proxy like cloudflare and
+// not have to worry about verifying a certificate athority like lets encrypt
+func (app *App) Listen() error {
 	app.Use(func(c fiber.Ctx) error {
 		url := goutil.Clean(c.Path())
 		method := goutil.Clean(c.Method())
 
 		if method == "POST" {
-			//todo: handle api requests
+			//todo: render apis
 		}
 
 		return RenderPage(c, url)
 	})
 
-	// listen to both http and https ports and
-	// auto generate a self signed ssl certificate
-	// (will also auto renew every year)
-	ListenAutoTLS(app, Config.PortHTTP, Config.PortSSL, Config.Root+"/db/ssl/auto_ssl")
-
-	// by using self signed certs, you can use a proxy like cloudflare and
-	// not have to worry about verifying a certificate athority like lets encrypt
-
-	return nil
+	return ListenAutoTLS(app.App, Config.PortHTTP, Config.PortSSL, Config.Root+"/db/ssl/auto_ssl")
 }
 
 func Render(c fiber.Ctx, name string, args htmlc.Map, layout ...string) error {
