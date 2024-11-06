@@ -1,0 +1,12 @@
+page: index
+layout: layout
+args: {
+  title: "Hello, Yaml!",
+  desc: "Description",
+  map: {
+    a: 1,
+  },
+  list: [
+    2,
+  ]
+}

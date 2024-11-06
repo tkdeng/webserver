@@ -1,0 +1,13 @@
+.git
+.svn
+.vscode
+.idea
+db
+test/db
+*.db
+*.sqlite
+ssl
+*.crt
+*.key
+test/routes.bin
+test/templates.exs
