@@ -25,7 +25,7 @@ func compile() {
 	}
 
 	//todo: sandbox downloads directory
-	os.MkdirAll(Config.Root+"/downloads", 0755)
+	os.MkdirAll(Config.Root+"/downloads", 2600)
 
 	PrintMsg("warn", "Compiling Server Routes...", 50, false)
 
